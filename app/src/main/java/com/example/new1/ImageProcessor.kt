@@ -14,7 +14,7 @@ class ImageProcessor {
         // Create a new bitmap with extra space at the top for the serial number
         val result = Bitmap.createBitmap(
             bitmap.width,
-            bitmap.height + 200, // Add 200 pixels at the top
+            bitmap.height + 250, // Add 250 pixels at the top (increased from 200)
             Bitmap.Config.ARGB_8888
         )
         
@@ -25,24 +25,23 @@ class ImageProcessor {
             color = Color.WHITE
             style = Paint.Style.FILL
         }
-        canvas.drawRect(0f, 0f, bitmap.width.toFloat(), 200f, whiteBackground)
+        canvas.drawRect(0f, 0f, bitmap.width.toFloat(), 250f, whiteBackground) // Increased from 200f
         
         // Draw the original image below the white area
-        canvas.drawBitmap(bitmap, 0f, 200f, null)
+        canvas.drawBitmap(bitmap, 0f, 250f, null) // Increased from 200f
         
         // Draw the serial number
         val textPaint = Paint().apply {
             color = Color.BLACK
-            textSize = 100f
+            textSize = 120f // Increased from 100f
             typeface = Typeface.DEFAULT_BOLD
             isAntiAlias = true
+            textAlign = Paint.Align.CENTER // Center align the text
         }
         
-        // Calculate text position
-        val textBounds = Rect()
-        textPaint.getTextBounds(serialNumber, 0, serialNumber.length, textBounds)
-        val x = (bitmap.width - textBounds.width()) / 2f
-        val y = 150f // Position from top
+        // Calculate text position - center it horizontally
+        val x = bitmap.width / 2f // Center horizontally
+        val y = 160f // Position from top (adjusted for larger area)
         
         canvas.drawText(serialNumber, x, y, textPaint)
         return result
