@@ -46,6 +46,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -628,23 +629,20 @@ fun CameraScreen(
                     )
                 }
 
-                // Serial Number Button with enhanced styling
+                // Serial Number Button changed to use pencil/edit icon
                 IconButton(
                     onClick = { showSerialNumberEditor = true },
                     modifier = Modifier
-                        .height(52.dp)
-                        .padding(horizontal = 16.dp)
-                        .background(Color.Black.copy(alpha = 0.6f), RoundedCornerShape(26.dp))
-                        .shadow(12.dp, RoundedCornerShape(26.dp), clip = false)
-                        .border(1.dp, Color.White.copy(alpha = 0.2f), RoundedCornerShape(26.dp))
+                        .size(52.dp)
+                        .background(Color.Black.copy(alpha = 0.6f), CircleShape)
+                        .shadow(12.dp, CircleShape, clip = false)
+                        .border(1.dp, Color.White.copy(alpha = 0.2f), CircleShape)
                 ) {
-                    Text(
-                        text = if (currentSerialNumber.isEmpty()) "Enter SN" else currentSerialNumber,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color.White,
-                            fontWeight = FontWeight.Medium,
-                            letterSpacing = 0.5.sp
-                        )
+                    Icon(
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "Edit Serial Number",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
             }
@@ -759,10 +757,10 @@ fun CameraScreen(
 }
 
 fun addSerialNumberOverlay(bitmap: Bitmap, serialNumber: String): Bitmap {
-    // Create a new bitmap with extra space at the top
+    // Create a new bitmap with extra space at the top - increased from 100 to 150 pixels
     val newBitmap = Bitmap.createBitmap(
         bitmap.width,
-        bitmap.height + 100, // Add 100 pixels at the top
+        bitmap.height + 150, // Add 150 pixels at the top (increased from 100)
         Bitmap.Config.ARGB_8888
     )
     
@@ -772,18 +770,19 @@ fun addSerialNumberOverlay(bitmap: Bitmap, serialNumber: String): Bitmap {
     canvas.drawColor(android.graphics.Color.WHITE)
     
     // Draw the original image below the white space
-    canvas.drawBitmap(bitmap, 0f, 100f, null)
+    canvas.drawBitmap(bitmap, 0f, 150f, null) // Changed from 100f to 150f
     
     val paint = Paint().apply {
         color = android.graphics.Color.BLACK
-        textSize = 60f // Increased font size
-        typeface = Typeface.DEFAULT_BOLD // Make it bold
+        textSize = 80f // Increased font size from 60f to 80f
+        typeface = Typeface.DEFAULT_BOLD
         isAntiAlias = true
+        textAlign = Paint.Align.CENTER // Center align the text
     }
     
-    // Position text at top left with some padding
-    val x = 20f // Left padding
-    val y = 70f // Position in the white space
+    // Position text in the center
+    val x = bitmap.width / 2f // Centered horizontally
+    val y = 90f // Position in the white space (adjusted for larger area and text)
     
     // Draw the text
     canvas.drawText(serialNumber, x, y, paint)
