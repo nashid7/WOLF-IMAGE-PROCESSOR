@@ -1,0 +1,46 @@
+image:
+  file: .gitpod.Dockerfile
+
+ports:
+  - port: 8080
+    onOpen: ignore
+  - port: 5037
+    onOpen: ignore
+
+tasks:
+  - init: |
+      echo "Setting up Android SDK..."
+      mkdir -p /workspace/android-sdk
+      cd /workspace/android-sdk
+      wget https://dl.google.com/android/repository/commandlinetools-linux-9123335_latest.zip -q
+      unzip -q commandlinetools-linux-9123335_latest.zip
+      mkdir -p cmdline-tools/latest
+      mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
+      rm -rf cmdline-tools/lib
+      export ANDROID_SDK_ROOT=/workspace/android-sdk
+      export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools
+      echo "Accepting licenses..."
+      yes | sdkmanager --licenses > /dev/null 2>&1
+      echo "Installing Android components..."
+      sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0" > /dev/null 2>&1
+      cd /workspace/$(basename $GITPOD_REPO_ROOT)
+      echo "Making gradlew executable..."
+      chmod +x ./gradlew
+      ./gradlew --version
+    command: |
+      cd /workspace/$(basename $GITPOD_REPO_ROOT)
+      echo "Ready for Android development!"
+      echo "To build your app, run: ./gradlew assembleDebug"
+
+vscode:
+  extensions:
+    - vscjava.vscode-java-pack
+    - mathiasfrohlich.Kotlin
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    addCheck: true
+    addComment: true
